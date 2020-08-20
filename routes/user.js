@@ -47,4 +47,36 @@ router.route("/delete/:username").delete((req, res) => {
     );
 });
 
+router.route("/:username").get((req, res) => {
+    User.findOne(
+        {username: req.params.username},
+        (error, result) => {
+            if (error) res.status(500).json({msg: error});
+            res.json({
+                data: result,
+                username: req.params.username,
+            });
+        }
+    );
+});
+
+router.route("/login").post((req, res) => {
+    User.findOne(
+        {username: req.body.username},
+        (error, result) => {
+            if(error) return res.status(500).json({msg: error});
+            if(result===null) {
+                return res.status(403).json("Either Username Incorrect");
+            }
+            if(result.password===req.body.password) {
+                //Here we implement the JWT token functionality.
+                res.json("TOKEN");
+            }
+            else {
+                res.status(403).json("Password Is Incorrect");
+            }
+        }
+    );
+});
+
 module.exports = router;
